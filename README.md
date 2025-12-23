@@ -13,7 +13,7 @@
 3. Create a namespace, deploy the Python-flask webserver, create a service and route:
 
 ```
-oc new-project ns1
+oc new-project test
 oc create deployment test-py --image quay.io/rhn-support-ccostell/ping-py:latest -n test
 oc expose deployment --port 8090
 oc expose svc test-py
