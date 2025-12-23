@@ -15,13 +15,13 @@
 ```
 oc new-project test
 oc create deployment test-py --image quay.io/rhn-support-ccostell/ping-py:latest -n test
-oc expose deployment --port 8090
+oc expose deployment test-py -n test --port 8090
 oc expose svc test-py
 ```
 4. verify the functioning route:
 
 ```
-HOST=$(oc get route testpy -n test -o jsonpath='{.spec.host}')
+HOST=$(oc get route test-py -n test -o jsonpath='{.spec.host}')
 curl -I http://$HOST/ping
 ```
 
@@ -81,6 +81,7 @@ rules:
  - apiGroups: ["extensions"]
    resources: ["replicasets"]
    verbs: ["get", "list", "watch"]
+EOF
 ```
 
 ```
@@ -124,6 +125,7 @@ spec:
     env: 
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://production-collector.observability.svc.cluster.local:4318
+EOF
 ```
 
 7. Create the OTEL collector:
