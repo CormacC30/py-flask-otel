@@ -1,21 +1,41 @@
-# Needs further adaptation from the docs
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
-  name: instrumentation
+  name: python
 spec:
-  env:
-    - name: OTEL_EXPORTER_OTLP_TIMEOUT
-      value: "20"
+  # env:
+  #   - name: OTEL_EXPORTER_OTLP_TIMEOUT
+  #     value: "20000"
+  #   - name: OTEL_TRACES_SAMPLER
+  #     value: always_on
+  #   - name: SPLUNK_TRACE_RESPONSE_HEADER_ENABLED
+  #     value: "true"
   exporter:
-    endpoint: http://production-collector.observability.svc.cluster.local:4317
+    endpoint: http://otel-collector-collector.test.svc.cluster.local:4318
   propagators:
     - tracecontext
     - baggage
   sampler:
-    type: parentbased_traceidratio
-    argument: "1"
-  python: 
-    env: 
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://production-collector.observability.svc.cluster.local:4318
+    type: parentbased_always_on
+    # type: parentbased_traceidratio
+    # argument: "0.25"
+  python:
+    env:
+    python:                                                                                                                                                    
+      env:
+        - name: OTEL_LOG_LEVEL                                                                                                                         
+          value: "debug"                                                                                                                                        
+        - name: OTEL_TRACES_EXPORTER
+          value: otlp                                                                                                                                          
+        - name: OTEL_METRICS_EXPORTER                                                                                                                        
+          value: otlp
+      #- name: OTEL_LOG_LEVEL
+      #  value: "debug"
+      #- name: OTEL_TRACES_EXPORTER
+      #  value: otlp
+      #- name: OTEL_EXPORTER_OTLP_ENDPOINT
+      #  value: http://otel-collector-collector.test.svc.cluster.local:4317
+      # Disabling system_metrics instrumenation as the test app is built using Alpine
+      # Instrumentation with metrics is tested in test instrumenation-python-musl
+      # - name: OTEL_PYTHON_DISABLED_INSTRUMENTATIONS
+      #  value: "system_metrics"

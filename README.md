@@ -18,6 +18,21 @@ oc create deployment test-py --image quay.io/rhn-support-ccostell/ping-py:latest
 oc expose deployment test-py -n test --port 8090
 oc expose svc test-py
 ```
+
+Add the PodSpec annotation:
+
+```
+oc patch deployment test-py -n test --type=json -p='[                                                                                                
+  {                                                                                                                                                    
+    "op": "add",                                                                                                                                          
+    "path": "/spec/template/metadata/annotations",                                                                                                     
+    "value": {                                                                                                                                                 
+      "instrumentation.opentelemetry.io/inject-python": "true"                                                                                          
+    }                                                                                                                                                 
+  }             
+]' 
+```
+
 4. verify the functioning route:
 
 ```
