@@ -19,21 +19,8 @@ oc expose deployment test-py -n test --port 8090
 oc expose svc test-py
 ```
 
-Add the PodSpec annotation:
 
-```
-oc patch deployment test-py -n test --type=json -p='[                                                                                                
-  {                                                                                                                                                    
-    "op": "add",                                                                                                                                          
-    "path": "/spec/template/metadata/annotations",                                                                                                     
-    "value": {                                                                                                                                                 
-      "instrumentation.opentelemetry.io/inject-python": "true"                                                                                          
-    }                                                                                                                                                 
-  }             
-]' 
-```
-
-4. verify the functioning route:
+4. verify the functioning route, use endpoint to generate traffic:
 
 ```
 HOST=$(oc get route test-py -n test -o jsonpath='{.spec.host}')
@@ -119,28 +106,7 @@ EOF
 6. Create instrumentation: https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/red_hat_build_of_opentelemetry/otel-configuration-of-instrumentation#otel-instrumentation-options_otel-configuration-of-instrumentation
 
 ```
-cat <<EOF | oc apply -f -
-apiVersion: opentelemetry.io/v1alpha1
-kind: Instrumentation
-metadata:
-  name: instrumentation
-spec:
-  env:
-    - name: OTEL_EXPORTER_OTLP_TIMEOUT
-      value: "20"
-  exporter:
-    endpoint: http://production-collector.observability.svc.cluster.local:4317
-  propagators:
-    - tracecontext
-    - baggage
-  sampler:
-    type: parentbased_traceidratio
-    argument: "1"
-  python: 
-    env: 
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://production-collector.observability.svc.cluster.local:4318
-EOF
+oc apply -f manifests/instrumentation
 ```
 
 7. Create the OTEL collector:
@@ -152,7 +118,15 @@ oc apply -f manifests/collector.yaml
 8. Add the following annotation to the PodSpec:
 
 ```
-instrumentation.opentelemetry.io/inject-python: "true"
+oc patch deployment test-py -n test --type=json -p='[                                                                                                
+  {                                                                                                                                                    
+    "op": "add",                                                                                                                                          
+    "path": "/spec/template/metadata/annotations",                                                                                                     
+    "value": {                                                                                                                                                 
+      "instrumentation.opentelemetry.io/inject-python": "true"                                                                                          
+    }                                                                                                                                                 
+  }             
+]' 
 ```
 
 9. Check metrics and Logs
