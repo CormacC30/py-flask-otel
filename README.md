@@ -39,7 +39,7 @@ cat <<EOF | oc apply -f -
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: otel-collector-metadata-role
+  name: otel-collector-role
 rules:
 - apiGroups: [""]
   resources: ["pods", "namespaces", "nodes"]
@@ -51,14 +51,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: otel-collector-metadata-binding
+  name: otel-collector-binding
 subjects:
 - kind: ServiceAccount
   name: otel-collector-sa
   namespace: test
 roleRef:
   kind: ClusterRole
-  name: otel-collector-metadata-role
+  name: otel-collector-role
   apiGroup: rbac.authorization.k8s.io
 EOF
 ```
@@ -106,7 +106,7 @@ EOF
 6. Create instrumentation: https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/red_hat_build_of_opentelemetry/otel-configuration-of-instrumentation#otel-instrumentation-options_otel-configuration-of-instrumentation
 
 ```
-oc apply -f manifests/instrumentation
+oc apply -f manifests/instrumentation.yaml
 ```
 
 7. Create the OTEL collector:
