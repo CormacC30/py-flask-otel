@@ -7,6 +7,7 @@
 - OpenShift Logging
 - Loki
 - Distributed Tracing
+- Ensure `User Workload Monitoring` is enabled
 
 2. Set up Object storage and LokiStack and TempoStack
 
