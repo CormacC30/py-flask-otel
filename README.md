@@ -43,11 +43,11 @@ oc create sa otel-collector-sa -n test
 oc create -Rf manifests
 ```
 
-6. Use the application's endpoint to generate traffic:
+6. Use the application's /ping endpoint to generate traffic:
 
 ```
 HOST=$(oc get route test-py -n test -o jsonpath='{.spec.host}')
-curl -I http://$HOST/ping
+curl http://$HOST/ping
 ```
 
 7. Verify the instrumented metrics:
