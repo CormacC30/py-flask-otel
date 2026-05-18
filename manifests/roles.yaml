@@ -1,31 +1,56 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: generate-processors-rbac
+  name: otel-collector-role
 rules:
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
-  - clusterrolebindings
-  - clusterroles
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
+- apiGroups: [""]
+  resources: ["pods", "namespaces", "nodes"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: ["apps"]
+  resources: ["replicasets"]
+  verbs: ["get", "watch", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: generate-processors-rbac
+  name: otel-collector-binding
+subjects:
+- kind: ServiceAccount
+  name: otel-collector-sa
+  namespace: test
+roleRef:
+  kind: ClusterRole
+  name: otel-collector-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector-logs-writer
+rules:
+ - apiGroups: ["loki.grafana.com"]
+   resourceNames: ["logs"]
+   resources: ["application"]
+   verbs: ["create"]
+ - apiGroups: [""]
+   resources: ["pods", "namespaces", "nodes"]
+   verbs: ["get", "watch", "list"]
+ - apiGroups: ["apps"]
+   resources: ["replicasets"]
+   verbs: ["get", "list", "watch"]
+ - apiGroups: ["extensions"]
+   resources: ["replicasets"]
+   verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector-logs-writer
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: generate-processors-rbac
+  name: otel-collector-logs-writer
 subjects:
-- kind: ServiceAccount
-  name: opentelemetry-operator-controller-manager
-  namespace: openshift-opentelemetry-operator
+  - kind: ServiceAccount
+    name: otel-collector-sa
+    namespace: test
