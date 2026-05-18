@@ -53,10 +53,10 @@ curl -I http://$HOST/ping
 7. Verify the instrumented metrics:
 
 ```
-# First check the servicemontors have been created
+# First check the servicemonitors have been created
 oc get servicemonitor -n test
 # cURL the target /metrics endpoint
-COLLECTOR_SVC_IP=$(oc get service otel-collector-collector -o jsonpath='{.spec.clusterIP}')
+COLLECTOR_SVC_IP=$(oc -n test get service otel-collector-collector -o jsonpath='{.spec.clusterIP}')
 oc -n openshift-monitoring exec -it prometheus-k8s-0 -- curl http://$COLLECTOR_SVC_IP:8889/metrics
 ```
 
