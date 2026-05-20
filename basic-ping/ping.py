@@ -7,5 +7,8 @@ app = Flask(__name__)
 def ping():
     return jsonify({"message": "pong"}), 200
 
+# Do NOT use app.run(debug=True) as it causes Werkzeug reloader to fork
+# after auto-instrumentation, preventing trace generation.
+# Instead, use 'flask run' command in Dockerfile or deployment
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8090)
+    app.run(host='0.0.0.0', port=8090)

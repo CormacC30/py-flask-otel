@@ -21,14 +21,12 @@ spec:
     # argument: "0.25"
   python:
     env:
-    python:                                                                                                                                                    
-      env:
-        - name: OTEL_LOG_LEVEL                                                                                                                         
-          value: "debug"                                                                                                                                        
-        - name: OTEL_TRACES_EXPORTER
-          value: otlp                                                                                                                                          
-        - name: OTEL_METRICS_EXPORTER                                                                                                                        
-          value: otlp
+      - name: OTEL_LOG_LEVEL
+        value: "debug"
+      - name: OTEL_TRACES_EXPORTER
+        value: otlp
+      - name: OTEL_METRICS_EXPORTER
+        value: otlp
       #- name: OTEL_LOG_LEVEL
       #  value: "debug"
       #- name: OTEL_TRACES_EXPORTER
